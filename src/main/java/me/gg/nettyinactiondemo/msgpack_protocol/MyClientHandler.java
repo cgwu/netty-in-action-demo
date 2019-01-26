@@ -67,14 +67,16 @@ public class MyClientHandler extends ChannelInboundHandlerAdapter {
                 option(ChannelOption.TCP_NODELAY, true).
                 option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000).
                 handler(new ChannelInitializer<SocketChannel>() {
+
                     @Override
                     protected void initChannel(SocketChannel channel) throws Exception {
                         //添加对象系列化编解码器,同时提供粘包拆包支持
-                        channel.pipeline().addLast(new LengthFieldBasedFrameDecoder(65535, 0, 2,0,2));
-                        channel.pipeline().addLast("对象解码器",new MyDecoder());
-                        channel.pipeline().addLast(new LengthFieldPrepender(2));
-                        channel.pipeline().addLast("对象编码器",new MyEncoder());
-                        channel.pipeline().addLast(new MyClientHandler());
+                        channel.pipeline().addLast("Byte2Msg Inbound", new LengthFieldBasedFrameDecoder(
+                                65535, 0, 2, 0, 2));
+                        channel.pipeline().addLast("对象解码器 Msg2Msg Inbound", new MyDecoder());
+                        channel.pipeline().addLast("Msg2Msg Outbound", new LengthFieldPrepender(2));
+                        channel.pipeline().addLast("对象编码器 Msg2Byte Outbound", new MyEncoder());
+                        channel.pipeline().addLast("Inbound", new MyClientHandler());
                     }
 
                 });
