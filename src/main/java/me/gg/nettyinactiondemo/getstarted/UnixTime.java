@@ -1,10 +1,13 @@
 package me.gg.nettyinactiondemo.getstarted;
 
+import org.msgpack.annotation.Message;
+
 import java.util.Date;
 
 /**
  * Created by danny on 2019/1/25.
  */
+@Message
 public class UnixTime {
     private String label;
     private final long value;
