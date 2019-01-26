@@ -6,24 +6,46 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.FixedLengthFrameDecoder;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.string.StringDecoder;
+import lombok.extern.slf4j.Slf4j;
 import me.gg.nettyinactiondemo.getstarted.UnixTime;
 
 @Sharable
+@Slf4j
 public class MyServerHandler extends ChannelInboundHandlerAdapter {
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("Register called");
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        log.info("Activate called");
+        ConnectionManager.add(ctx.channel());
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        log.info("channelInactive");
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        log.info("channelUnregistered");
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)  throws Exception {
         UnixTime ut = (UnixTime) msg;
         //直接获取request的msg
-        System.out.println("服务器接收到消息:" + ut);
+        System.out.println("服务器接收到客户端"+ ctx.channel().id() + "@" + ctx.channel().remoteAddress()+"消息:" + ut);
 
         ut.setLabel(ut.getLabel() + "$$$");
-        final ChannelFuture f1 = ctx.writeAndFlush(ut); // (3)
+
+        ConnectionManager.write(ut);
+//        final ChannelFuture f1 = ctx.writeAndFlush(ut); // (3)
     }
 
     @Override
@@ -40,7 +62,7 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(bGroup, wGroup)
                 .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.TCP_NODELAY, true)
+//                .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
 
