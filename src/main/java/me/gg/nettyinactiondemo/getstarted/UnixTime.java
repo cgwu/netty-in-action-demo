@@ -26,6 +26,10 @@ public class UnixTime {
         return label;
     }
 
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
     @Override
     public String toString() {
         return "标签:" + label + ";时间:" + new Date((value() - 2208988800L) * 1000L).toString();

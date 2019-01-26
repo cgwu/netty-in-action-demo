@@ -22,7 +22,11 @@ public class TimeServerHandler2 extends ChannelInboundHandlerAdapter {
 //        ctx.write(Unpooled.copiedBuffer("TIME", CharsetUtil.UTF_8));
 //        final ChannelFuture f = ctx.writeAndFlush(time); // (3)
 
-        UnixTime time = new UnixTime(System.currentTimeMillis() ,"Time");
+        UnixTime time = new UnixTime();
+        time.setLabel("###1");
+        final ChannelFuture f1 = ctx.writeAndFlush(time); // (3)
+
+        time.setLabel("###2");
         final ChannelFuture f = ctx.writeAndFlush(time); // (3)
 
         // #1.

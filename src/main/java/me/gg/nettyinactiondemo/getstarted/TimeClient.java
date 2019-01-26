@@ -1,6 +1,8 @@
 package me.gg.nettyinactiondemo.getstarted;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -8,6 +10,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.util.CharsetUtil;
 
 /**
  * Created by danny on 2019/1/25.
@@ -31,6 +35,8 @@ public class TimeClient {
 //                    ch.pipeline().addLast(new TimeClientHandler());
 //                    ch.pipeline().addLast(new TimeDecoder(), new TimeClientHandler());
 //                    ch.pipeline().addLast(new TimeReplayingDecoder(), new TimeClientHandler());
+                    ByteBuf delimiter = Unpooled.copiedBuffer("$_".getBytes(CharsetUtil.UTF_8));
+                    ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024,delimiter));
                     ch.pipeline().addLast(new TimeReplayingDecoder2(), new TimeClientHandler2());
                 }
             });
