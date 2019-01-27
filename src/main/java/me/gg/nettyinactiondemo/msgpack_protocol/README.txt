@@ -10,3 +10,6 @@ and use it whenever you need to write something to the remote peer, even when ma
 The following listing shows a simple example of writing with multiple threads. Note that the messages
 are guaranteed to be sent in order.
 
+Mac IDEA插件——protobuf 插件
+https://www.cnblogs.com/ficohu/p/6696195.html
+https://github.com/protocolbuffers/protobuf/releases
